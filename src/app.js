@@ -16,13 +16,13 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use('/uploads', express.static('uploads'));
 // Routes
 app.use('/api/clients', clientRoutes);
 app.use('/api/supplier', supplierRoutes);
 app.use('/api/categories', categoryRoutes);
-app.use('/supplier-orders', supplierOrderRoutes);
-app.use('/client-orders', clientOrderRoutes);
-app.use('/client-invoice', clientInvoiceRoutes);
-app.use('/articles', articleRoutes);
+app.use('/api/supplier-orders', supplierOrderRoutes);
+app.use('/api/client-orders', clientOrderRoutes);
+app.use('/api/client-invoice', clientInvoiceRoutes);
+app.use('/api/articles', articleRoutes);
 module.exports = app;

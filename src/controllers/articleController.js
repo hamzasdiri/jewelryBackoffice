@@ -14,22 +14,50 @@ const getArticles = async (req, res) => {
 // Add a new article
 const addArticle = async (req, res) => {
   try {
-    const article = new Article(req.body);
+    const { code, designation, description, quantity, price, category } = req.body;
+
+    const article = new Article({
+      code,
+      designation,
+      description,
+      quantity,
+      price,
+      category,
+      image: req.file ? `/uploads/${req.file.filename}` : null, // Save the image path
+    });
+
     await article.save();
+
     res.status(201).json(article);
   } catch (error) {
     res.status(500).json({ message: 'Failed to add article', error });
   }
 };
-
 // Update an article
 const updateArticle = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedArticle = await Article.findByIdAndUpdate(id, req.body, { new: true });
+    const { code, designation, description, quantity, price, category } = req.body;
+
+    const updatedFields = {
+      code,
+      designation,
+      description,
+      quantity,
+      price,
+      category,
+    };
+
+    if (req.file) {
+      updatedFields.image = `/uploads/${req.file.filename}`; // Update image if provided
+    }
+
+    const updatedArticle = await Article.findByIdAndUpdate(id, updatedFields, { new: true });
+
     if (!updatedArticle) {
       return res.status(404).json({ message: 'Article not found' });
     }
+
     res.json(updatedArticle);
   } catch (error) {
     res.status(500).json({ message: 'Failed to update article', error });

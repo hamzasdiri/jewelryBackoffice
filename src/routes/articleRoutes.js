@@ -1,4 +1,5 @@
 // src/routes/articleRoutes.js
+const upload = require('../middlewares/upload');
 const express = require('express');
 const {
   getArticles,
@@ -13,10 +14,10 @@ const router = express.Router();
 router.get('/', getArticles);
 
 // Add a new article
-router.post('/', addArticle);
+router.post('/', upload.single('image'), addArticle);
 
 // Update an existing article
-router.put('/:id', updateArticle);
+router.put('/:id', upload.single('image'), updateArticle);
 
 // Delete an article
 router.delete('/:id', deleteArticle);

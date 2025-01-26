@@ -28,6 +28,9 @@ const ArticleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String, // URL or file path to the image
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Article', ArticleSchema);

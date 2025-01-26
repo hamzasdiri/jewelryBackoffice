@@ -1,5 +1,5 @@
 // src/controllers/clientController.js
-const Client = require('../models/client');
+const Client = require('../models/Client');
 
 // Fetch all clients
 const getClients = async (req, res) => {

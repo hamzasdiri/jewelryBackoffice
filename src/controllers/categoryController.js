@@ -1,5 +1,5 @@
 // src/controllers/categoryController.js
-const Category = require('../models/category');
+const Category = require('../models/Category');
 
 // Fetch all categories
 const getCategories = async (req, res) => {

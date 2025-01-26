@@ -1,4 +1,3 @@
-// src/models/Article.js
 const mongoose = require('mongoose');
 
 const ArticleSchema = new mongoose.Schema({
@@ -24,8 +23,13 @@ const ArticleSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
+  remise: {
+    type: Number,
+    default: 0,
+  },
   category: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, // Reference to Category
+    ref: 'Category',
     required: true,
   },
   image: {

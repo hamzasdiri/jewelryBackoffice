@@ -28,6 +28,20 @@ const getClientOrderById = async (req, res) => {
 const addClientOrder = async (req, res) => {
   try {
     const newOrder = new ClientOrder(req.body);
+
+    // Update article quantities (decrease)
+    for (const item of newOrder.articles) {
+      const article = await Article.findById(item.article);
+      if (!article) {
+        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
+      }
+      if (article.quantity < item.quantity) {
+        return res.status(400).json({ message: `Not enough stock for article ${item.article}` });
+      }
+      article.quantity -= item.quantity; // Decrease quantity by the ordered amount
+      await article.save();
+    }
+
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (error) {
@@ -39,9 +53,31 @@ const addClientOrder = async (req, res) => {
 const updateClientOrder = async (req, res) => {
   try {
     const updatedOrder = await ClientOrder.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
     if (!updatedOrder) {
       return res.status(404).json({ message: 'Client order not found' });
     }
+
+    // Update article quantities (decrease or increase based on changes)
+    for (const item of req.body.articles || []) {
+      const article = await Article.findById(item.article);
+      if (!article) {
+        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
+      }
+
+      if (item.quantity > 0) {
+        // If the quantity has decreased, subtract it
+        if (article.quantity < item.quantity) {
+          return res.status(400).json({ message: `Not enough stock for article ${item.article}` });
+        }
+        article.quantity -= item.quantity;
+      } else {
+        // If the quantity has increased, add it
+        article.quantity += Math.abs(item.quantity);
+      }
+      await article.save();
+    }
+
     res.json(updatedOrder);
   } catch (error) {
     res.status(400).json({ message: 'Failed to update client order', error });

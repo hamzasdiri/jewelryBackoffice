@@ -28,6 +28,17 @@ const getSupplierOrderById = async (req, res) => {
 const addSupplierOrder = async (req, res) => {
   try {
     const newOrder = new SupplierOrder(req.body);
+
+    // Update article quantities (increase)
+    for (const item of newOrder.articles) {
+      const article = await Article.findById(item.article);
+      if (!article) {
+        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
+      }
+      article.quantity += item.quantity; // Increase quantity by the ordered amount
+      await article.save();
+    }
+
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (error) {
@@ -39,9 +50,25 @@ const addSupplierOrder = async (req, res) => {
 const updateSupplierOrder = async (req, res) => {
   try {
     const updatedOrder = await SupplierOrder.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
     if (!updatedOrder) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
+
+    // Update article quantities (increase or decrease based on changes)
+    for (const item of req.body.articles || []) {
+      const article = await Article.findById(item.article);
+      if (!article) {
+        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
+      }
+
+      // If quantity has increased, add the quantity
+      if (item.quantity > 0) {
+        article.quantity += item.quantity;
+      }
+      await article.save();
+    }
+
     res.json(updatedOrder);
   } catch (error) {
     res.status(400).json({ message: 'Failed to update supplier order', error });

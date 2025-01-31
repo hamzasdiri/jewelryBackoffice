@@ -28,7 +28,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/api/clients', clientRoutes);
-app.use('/api/supplier', supplierRoutes);
+app.use('/api/suppliers', supplierRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/supplier-orders', supplierOrderRoutes);
 app.use('/api/client-orders', clientOrderRoutes);

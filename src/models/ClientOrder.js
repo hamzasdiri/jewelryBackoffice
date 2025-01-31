@@ -18,6 +18,7 @@ const clientOrderSchema = new mongoose.Schema({
       quantity: { type: Number, required: true }, // Quantity of this article in the order
     },
   ],
+  etatCommande: { type: String, required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('ClientOrder', clientOrderSchema);

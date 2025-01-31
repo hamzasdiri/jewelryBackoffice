@@ -7,25 +7,11 @@ const supplierOrderSchema = new mongoose.Schema({
   expedition: { type: String, required: true }, // Shipping method
   noteLivraison: { type: String }, // Delivery note
   modePaiment: { type: String, required: true }, // Payment method
-  categories: [
-    {
-      category: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to Category
-        ref: 'Category',
-        required: true,
-      },
-      articles: [
-        {
-          article: {
-            type: mongoose.Schema.Types.ObjectId, // Reference to Article
-            ref: 'Article',
-            required: true,
-          },
-          quantity: { type: Number, required: true }, // Ordered quantity
-        },
-      ],
-    },
-  ],
+  codeSuivi: { type: String, required: true },
+  codeArticle: { type: String, required: true },
+  quantite: { type: Number, required: true },
+  prix: { type: Number, required: true },
+  total: { type: Number, required: true },
   note: { type: String }, // Additional notes
 }, { timestamps: true });
 

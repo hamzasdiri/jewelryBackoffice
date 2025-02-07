@@ -43,28 +43,26 @@ router.get('/', getClients);
  *     responses:
  *       201:
  *         description: Client created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Client'
+ *       400:
+ *         description: Invalid input data
  */
 router.post('/', addClient);
 
 /**
  * @swagger
- * /api/clients/{id}:
+ * /api/clients/{clientId}:
  *   put:
  *     summary: Update an existing client
- *     description: Updates a client with the given ID
+ *     description: Updates the client details based on the client ID
  *     parameters:
- *       - name: id
- *         in: path
- *         description: The ID of the client to be updated
+ *       - in: path
+ *         name: clientId
  *         required: true
+ *         description: The ID of the client to update
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Client object with updated fields
+ *       description: Updated client data
  *       required: true
  *       content:
  *         application/json:
@@ -73,26 +71,24 @@ router.post('/', addClient);
  *     responses:
  *       200:
  *         description: Client updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Client'
+ *       400:
+ *         description: Invalid client ID or data
  *       404:
  *         description: Client not found
  */
-router.put('/:id', updateClient);
+router.put('/:clientId', updateClient);
 
 /**
  * @swagger
- * /api/clients/{id}:
+ * /api/clients/{clientId}:
  *   delete:
  *     summary: Delete a client
- *     description: Removes a client from the system
+ *     description: Deletes the client based on the client ID
  *     parameters:
- *       - name: id
- *         in: path
- *         description: The ID of the client to be deleted
+ *       - in: path
+ *         name: clientId
  *         required: true
+ *         description: The ID of the client to delete
  *         schema:
  *           type: string
  *     responses:
@@ -101,6 +97,6 @@ router.put('/:id', updateClient);
  *       404:
  *         description: Client not found
  */
-router.delete('/:id', deleteClient);
+router.delete('/:clientId', deleteClient);
 
 module.exports = router;

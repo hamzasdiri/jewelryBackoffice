@@ -48,23 +48,23 @@ router.get('/', getArticles);
  *             schema:
  *               $ref: '#/components/schemas/Article'
  */
-router.post('/', upload.single('image'), addArticle);
+router.post('/', upload.single('image'), addArticle); // Handle file upload for image
 
 /**
  * @swagger
  * /api/articles/{id}:
  *   put:
- *     summary: Update an existing article
- *     description: Updates an article with the given ID
+ *     summary: Update an article
+ *     description: Updates an existing article by its ID
  *     parameters:
  *       - name: id
  *         in: path
- *         description: The ID of the article to be updated
+ *         description: The article ID
  *         required: true
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Article object with updated fields
+ *       description: Article object that needs to be updated
  *       required: true
  *       content:
  *         application/json:
@@ -80,18 +80,18 @@ router.post('/', upload.single('image'), addArticle);
  *       404:
  *         description: Article not found
  */
-router.put('/:id', upload.single('image'), updateArticle);
+router.put('/:id', upload.single('image'), updateArticle); // Handle file upload for image
 
 /**
  * @swagger
  * /api/articles/{id}:
  *   delete:
  *     summary: Delete an article
- *     description: Removes an article from the system
+ *     description: Deletes an article by its ID
  *     parameters:
  *       - name: id
  *         in: path
- *         description: The ID of the article to be deleted
+ *         description: The article ID
  *         required: true
  *         schema:
  *           type: string

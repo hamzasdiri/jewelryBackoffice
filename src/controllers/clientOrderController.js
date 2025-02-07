@@ -1,5 +1,6 @@
 // src/controllers/clientOrderController.js
 const ClientOrder = require('../models/ClientOrder');
+const Article = require('../models/Article');  // Import Article model
 
 // Get all client orders
 const getClientOrders = async (req, res) => {
@@ -7,20 +8,20 @@ const getClientOrders = async (req, res) => {
     const orders = await ClientOrder.find();
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch client orders', error });
+    res.status(500).json({ message: 'Failed to fetch client orders', error: error.message });
   }
 };
 
 // Get a single client order by ID
 const getClientOrderById = async (req, res) => {
   try {
-    const order = await ClientOrder.findById(req.params.id);
+    const order = await ClientOrder.findById(req.params.id).populate('articles.article');
     if (!order) {
       return res.status(404).json({ message: 'Client order not found' });
     }
     res.json(order);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch client order', error });
+    res.status(500).json({ message: 'Failed to fetch client order', error: error.message });
   }
 };
 
@@ -30,8 +31,10 @@ const addClientOrder = async (req, res) => {
     const newOrder = new ClientOrder(req.body);
 
     // Update article quantities (decrease)
+    const articles = await Article.find({ '_id': { $in: newOrder.articles.map(item => item.article) } });
+
     for (const item of newOrder.articles) {
-      const article = await Article.findById(item.article);
+      const article = articles.find(a => a._id.toString() === item.article.toString());
       if (!article) {
         return res.status(404).json({ message: `Article with ID ${item.article} not found` });
       }
@@ -45,7 +48,7 @@ const addClientOrder = async (req, res) => {
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to add client order', error });
+    res.status(400).json({ message: 'Failed to add client order', error: error.message });
   }
 };
 
@@ -59,20 +62,22 @@ const updateClientOrder = async (req, res) => {
     }
 
     // Update article quantities (decrease or increase based on changes)
+    const articles = await Article.find({ '_id': { $in: req.body.articles.map(item => item.article) } });
+
     for (const item of req.body.articles || []) {
-      const article = await Article.findById(item.article);
+      const article = articles.find(a => a._id.toString() === item.article.toString());
       if (!article) {
         return res.status(404).json({ message: `Article with ID ${item.article} not found` });
       }
 
+      // If the quantity has decreased
       if (item.quantity > 0) {
-        // If the quantity has decreased, subtract it
         if (article.quantity < item.quantity) {
           return res.status(400).json({ message: `Not enough stock for article ${item.article}` });
         }
         article.quantity -= item.quantity;
       } else {
-        // If the quantity has increased, add it
+        // If the quantity has increased
         article.quantity += Math.abs(item.quantity);
       }
       await article.save();
@@ -80,7 +85,7 @@ const updateClientOrder = async (req, res) => {
 
     res.json(updatedOrder);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to update client order', error });
+    res.status(400).json({ message: 'Failed to update client order', error: error.message });
   }
 };
 
@@ -91,9 +96,19 @@ const deleteClientOrder = async (req, res) => {
     if (!deletedOrder) {
       return res.status(404).json({ message: 'Client order not found' });
     }
+
+    // Optionally, restore article quantities after order deletion
+    for (const item of deletedOrder.articles) {
+      const article = await Article.findById(item.article);
+      if (article) {
+        article.quantity += item.quantity;
+        await article.save();
+      }
+    }
+
     res.json({ message: 'Client order deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete client order', error });
+    res.status(500).json({ message: 'Failed to delete client order', error: error.message });
   }
 };
 

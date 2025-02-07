@@ -37,13 +37,13 @@ router.get('/', getSupplierOrders);
  *     parameters:
  *       - name: id
  *         in: path
- *         description: The ID of the supplier order to be retrieved
+ *         description: The ID of the supplier order to retrieve
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Supplier order found
+ *         description: Supplier order details
  *         content:
  *           application/json:
  *             schema:
@@ -57,10 +57,9 @@ router.get('/:id', getSupplierOrderById);
  * @swagger
  * /api/supplier-orders:
  *   post:
- *     summary: Add a new supplier order
- *     description: Creates a new supplier order with the provided details
+ *     summary: Create a new supplier order
+ *     description: Adds a new supplier order to the database
  *     requestBody:
- *       description: Supplier order object that needs to be added
  *       required: true
  *       content:
  *         application/json:
@@ -69,28 +68,25 @@ router.get('/:id', getSupplierOrderById);
  *     responses:
  *       201:
  *         description: Supplier order created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SupplierOrder'
+ *       400:
+ *         description: Bad request
  */
 router.post('/', addSupplierOrder);
 
 /**
  * @swagger
  * /api/supplier-orders/{id}:
- *   patch:
+ *   put:
  *     summary: Update an existing supplier order
- *     description: Updates a supplier order with the given ID
+ *     description: Updates an existing supplier order by its ID
  *     parameters:
  *       - name: id
  *         in: path
- *         description: The ID of the supplier order to be updated
+ *         description: The ID of the supplier order to update
  *         required: true
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Supplier order object with updated fields
  *       required: true
  *       content:
  *         application/json:
@@ -99,25 +95,21 @@ router.post('/', addSupplierOrder);
  *     responses:
  *       200:
  *         description: Supplier order updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SupplierOrder'
  *       404:
  *         description: Supplier order not found
  */
-router.patch('/:id', updateSupplierOrder);
+router.put('/:id', updateSupplierOrder);
 
 /**
  * @swagger
  * /api/supplier-orders/{id}:
  *   delete:
- *     summary: Delete a supplier order
- *     description: Removes a supplier order from the system
+ *     summary: Delete a specific supplier order
+ *     description: Deletes a supplier order by its ID
  *     parameters:
  *       - name: id
  *         in: path
- *         description: The ID of the supplier order to be deleted
+ *         description: The ID of the supplier order to delete
  *         required: true
  *         schema:
  *           type: string

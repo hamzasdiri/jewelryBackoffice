@@ -42,11 +42,13 @@ router.get('/', getSuppliers);
  *             $ref: '#/components/schemas/Supplier'
  *     responses:
  *       201:
- *         description: Supplier created successfully
+ *         description: Supplier successfully created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Supplier'
+ *       400:
+ *         description: Invalid data provided
  */
 router.post('/', addSupplier);
 
@@ -55,16 +57,16 @@ router.post('/', addSupplier);
  * /api/suppliers/{id}:
  *   put:
  *     summary: Update an existing supplier
- *     description: Updates a supplier with the given ID
+ *     description: Updates the details of an existing supplier
  *     parameters:
- *       - name: id
- *         in: path
- *         description: The ID of the supplier to be updated
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: ID of the supplier to update
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Supplier object with updated fields
+ *       description: Supplier object that needs to be updated
  *       required: true
  *       content:
  *         application/json:
@@ -72,13 +74,15 @@ router.post('/', addSupplier);
  *             $ref: '#/components/schemas/Supplier'
  *     responses:
  *       200:
- *         description: Supplier updated successfully
+ *         description: Supplier successfully updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Supplier'
  *       404:
  *         description: Supplier not found
+ *       400:
+ *         description: Invalid data provided
  */
 router.put('/:id', updateSupplier);
 
@@ -87,17 +91,17 @@ router.put('/:id', updateSupplier);
  * /api/suppliers/{id}:
  *   delete:
  *     summary: Delete a supplier
- *     description: Removes a supplier from the system
+ *     description: Deletes the supplier with the specified ID
  *     parameters:
- *       - name: id
- *         in: path
- *         description: The ID of the supplier to be deleted
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: ID of the supplier to delete
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Supplier deleted successfully
+ *         description: Supplier successfully deleted
  *       404:
  *         description: Supplier not found
  */

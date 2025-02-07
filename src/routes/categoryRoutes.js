@@ -1,4 +1,3 @@
-// src/routes/categoryRoutes.js
 const express = require('express');
 const {
   getCategories,
@@ -52,19 +51,19 @@ router.post('/', addCategory);
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categories/{code}:
  *   put:
  *     summary: Update an existing category
- *     description: Updates a category with the given ID
+ *     description: Updates the category with the specified code
  *     parameters:
- *       - name: id
+ *       - name: code
  *         in: path
- *         description: The ID of the category to be updated
+ *         description: The unique identifier of the category to update
  *         required: true
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Category object with updated fields
+ *       description: Category object that needs to be updated
  *       required: true
  *       content:
  *         application/json:
@@ -80,18 +79,18 @@ router.post('/', addCategory);
  *       404:
  *         description: Category not found
  */
-router.put('/:id', updateCategory);
+router.put('/:code', updateCategory);
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categories/{code}:
  *   delete:
  *     summary: Delete a category
- *     description: Removes a category from the system
+ *     description: Deletes the category with the specified code
  *     parameters:
- *       - name: id
+ *       - name: code
  *         in: path
- *         description: The ID of the category to be deleted
+ *         description: The unique identifier of the category to delete
  *         required: true
  *         schema:
  *           type: string
@@ -101,6 +100,6 @@ router.put('/:id', updateCategory);
  *       404:
  *         description: Category not found
  */
-router.delete('/:id', deleteCategory);
+router.delete('/:code', deleteCategory);
 
 module.exports = router;

@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const supplierOrderSchema = new mongoose.Schema({
   codeCommande: { type: String, required: true, unique: true },
   dateCommande: { type: Date, required: true },
-  fournisseur: { type: String, required: true }, // Supplier name or ID
+  fournisseur: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Supplier', 
+    required: true 
+  },
   expedition: { type: String, required: true }, // Shipping method
   noteLivraison: { type: String }, // Delivery note
   modePaiment: { type: String, required: true }, // Payment method

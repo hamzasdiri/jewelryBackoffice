@@ -43,13 +43,13 @@ router.get('/', getClientOrders);
  *           type: string
  *     responses:
  *       200:
- *         description: The client order for the specified ID
+ *         description: A specific client order
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ClientOrder'
  *       404:
- *         description: Client order not found for the given ID
+ *         description: Client order not found
  */
 router.get('/:id', getClientOrderById);
 
@@ -58,9 +58,8 @@ router.get('/:id', getClientOrderById);
  * /api/client-orders:
  *   post:
  *     summary: Add a new client order
- *     description: Creates a new client order with the provided details
+ *     description: Creates a new client order
  *     requestBody:
- *       description: Client order object that needs to be added
  *       required: true
  *       content:
  *         application/json:
@@ -68,7 +67,7 @@ router.get('/:id', getClientOrderById);
  *             $ref: '#/components/schemas/ClientOrder'
  *     responses:
  *       201:
- *         description: Client order created successfully
+ *         description: Client order successfully created
  *         content:
  *           application/json:
  *             schema:
@@ -79,9 +78,9 @@ router.post('/', addClientOrder);
 /**
  * @swagger
  * /api/client-orders/{id}:
- *   patch:
+ *   put:
  *     summary: Update an existing client order
- *     description: Updates a specific client order using the provided ID
+ *     description: Updates an existing client order using the provided order ID
  *     parameters:
  *       - name: id
  *         in: path
@@ -90,7 +89,6 @@ router.post('/', addClientOrder);
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Client order object with updated fields
  *       required: true
  *       content:
  *         application/json:
@@ -98,22 +96,22 @@ router.post('/', addClientOrder);
  *             $ref: '#/components/schemas/ClientOrder'
  *     responses:
  *       200:
- *         description: Client order updated successfully
+ *         description: Client order successfully updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ClientOrder'
  *       404:
- *         description: Client order not found for the given ID
+ *         description: Client order not found
  */
-router.patch('/:id', updateClientOrder);
+router.put('/:id', updateClientOrder);
 
 /**
  * @swagger
  * /api/client-orders/{id}:
  *   delete:
- *     summary: Delete a client order
- *     description: Removes a specific client order using the provided ID
+ *     summary: Delete a client order by ID
+ *     description: Deletes the specified client order by ID
  *     parameters:
  *       - name: id
  *         in: path
@@ -123,9 +121,9 @@ router.patch('/:id', updateClientOrder);
  *           type: string
  *     responses:
  *       200:
- *         description: Client order deleted successfully
+ *         description: Client order successfully deleted
  *       404:
- *         description: Client order not found for the given ID
+ *         description: Client order not found
  */
 router.delete('/:id', deleteClientOrder);
 

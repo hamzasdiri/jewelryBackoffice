@@ -1,10 +1,10 @@
-// src/controllers/supplierOrderController.js
 const SupplierOrder = require('../models/SupplierOrder');
+const Article = require('../models/Article'); // Assuming you have an Article model
 
 // Get all supplier orders
 const getSupplierOrders = async (req, res) => {
   try {
-    const orders = await SupplierOrder.find();
+    const orders = await SupplierOrder.find().populate('fournisseur');
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch supplier orders', error });
@@ -14,7 +14,7 @@ const getSupplierOrders = async (req, res) => {
 // Get a single supplier order by ID
 const getSupplierOrderById = async (req, res) => {
   try {
-    const order = await SupplierOrder.findById(req.params.id);
+    const order = await SupplierOrder.findById(req.params.id).populate('fournisseur');
     if (!order) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
@@ -29,8 +29,8 @@ const addSupplierOrder = async (req, res) => {
   try {
     const newOrder = new SupplierOrder(req.body);
 
-    // Update article quantities (increase)
-    for (const item of newOrder.articles) {
+    // Update article quantities (increase) when a new order is placed
+    for (const item of newOrder.articles || []) {
       const article = await Article.findById(item.article);
       if (!article) {
         return res.status(404).json({ message: `Article with ID ${item.article} not found` });
@@ -55,7 +55,7 @@ const updateSupplierOrder = async (req, res) => {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
 
-    // Update article quantities (increase or decrease based on changes)
+    // Handle article quantity updates (increase or decrease based on changes)
     for (const item of req.body.articles || []) {
       const article = await Article.findById(item.article);
       if (!article) {
@@ -65,6 +65,8 @@ const updateSupplierOrder = async (req, res) => {
       // If quantity has increased, add the quantity
       if (item.quantity > 0) {
         article.quantity += item.quantity;
+      } else if (item.quantity < 0) {
+        article.quantity += item.quantity; // Decrease quantity
       }
       await article.save();
     }
@@ -82,6 +84,16 @@ const deleteSupplierOrder = async (req, res) => {
     if (!deletedOrder) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
+
+    // Optional: Update article quantities when an order is deleted
+    for (const item of deletedOrder.articles || []) {
+      const article = await Article.findById(item.article);
+      if (article) {
+        article.quantity -= item.quantity; // Revert quantity increase
+        await article.save();
+      }
+    }
+
     res.json({ message: 'Supplier order deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete supplier order', error });

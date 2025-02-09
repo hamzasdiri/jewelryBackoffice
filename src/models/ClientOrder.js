@@ -12,7 +12,7 @@ const clientOrderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Expedition', 
     required: true 
-  },
+  }, // Updated to reference Expedition
   noteLivraison: { type: String },
   modePaiment: { type: String, required: true },
   codeSuivi: { type: String },

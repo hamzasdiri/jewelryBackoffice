@@ -11,6 +11,23 @@ const getArticles = async (req, res) => {
   }
 };
 
+// Fetch an article by ID
+const getArticleById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const article = await Article.findById(id);
+    
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found' });
+    }
+
+    res.json(article);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch article', error });
+  }
+};
+
+
 // Add a new article
 const addArticle = async (req, res) => {
   try {
@@ -80,6 +97,7 @@ const deleteArticle = async (req, res) => {
 
 module.exports = {
   getArticles,
+  getArticleById,
   addArticle,
   updateArticle,
   deleteArticle,

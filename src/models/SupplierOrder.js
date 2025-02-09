@@ -8,7 +8,11 @@ const supplierOrderSchema = new mongoose.Schema({
     ref: 'Supplier', 
     required: true 
   },
-  expedition: { type: String, required: true }, // Shipping method
+  expedition: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Expedition', 
+    required: true 
+  }, // Updated to reference Expedition
   noteLivraison: { type: String }, // Delivery note
   modePaiment: { type: String, required: true }, // Payment method
   codeSuivi: { type: String, required: true },

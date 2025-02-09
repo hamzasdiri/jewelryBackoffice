@@ -11,6 +11,22 @@ const getClients = async (req, res) => {
   }
 };
 
+// Fetch a client by ID
+const getClientById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const client = await Client.findById(id);
+    
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    res.json(client);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch client', error });
+  }
+};
+
 // Add a new client
 const addClient = async (req, res) => {
   try {
@@ -52,6 +68,7 @@ const deleteClient = async (req, res) => {
 
 module.exports = {
   getClients,
+  getClientById,
   addClient,
   updateClient,
   deleteClient,

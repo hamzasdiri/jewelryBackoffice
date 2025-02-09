@@ -107,7 +107,10 @@ const swaggerOptions = {
               description: "Order date",
             },
             client: { type: "string", description: "Client ID" },
-            expedition: { type: "string", description: "Shipping method" },
+            expedition: {
+              type: "string",
+              description: "Expedition ID (Reference to Expedition)",
+            },
             noteLivraison: { type: "string", description: "Delivery note" },
             modePaiment: { type: "string", description: "Payment mode" },
             codeSuivi: { type: "string", description: "Tracking code" },
@@ -125,6 +128,15 @@ const swaggerOptions = {
               },
             },
             etatCommande: { type: "string", description: "Order status" },
+            freeShipping: {
+              type: "boolean",
+              description: "Indicates if shipping is free",
+            },
+            total: {
+              type: "number",
+              description: "Total price of the order",
+              minimum: 0,
+            },
           },
         },
         Supplier: {
@@ -153,7 +165,10 @@ const swaggerOptions = {
               description: "Order date",
             },
             fournisseur: { type: "string", description: "Supplier ID" },
-            expedition: { type: "string", description: "Shipping method" },
+            expedition: {
+              type: "string",
+              description: "Expedition ID (Reference to Expedition)",
+            },
             noteLivraison: { type: "string", description: "Delivery note" },
             modePaiment: { type: "string", description: "Payment mode" },
             codeSuivi: { type: "string", description: "Tracking code" },
@@ -170,6 +185,17 @@ const swaggerOptions = {
               description: "Total amount",
             },
             note: { type: "string", description: "Additional notes" },
+          },
+        },
+        Expedition: {
+          type: "object",
+          properties: {
+            _id: {
+              type: "integer",
+              description: "Expedition ID (Custom numeric ID)",
+            },
+            nom: { type: "string", description: "Shipping name" },
+            frais: { type: "number", description: "Shipping cost", minimum: 0 },
           },
         },
       },

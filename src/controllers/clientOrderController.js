@@ -30,6 +30,12 @@ const getClientOrderById = async (req, res) => {
 };
 
 // Create a new client order
+const mongoose = require('mongoose');
+const Client = require('../models/Client');
+const Expedition = require('../models/Expedition');
+const Article = require('../models/Article');
+const ClientOrder = require('../models/ClientOrder');
+
 const createClientOrder = async (req, res) => {
   try {
     const {
@@ -46,16 +52,24 @@ const createClientOrder = async (req, res) => {
       total
     } = req.body;
 
-    // Check if the client exists
+    // 1️⃣ Check if the client exists
     const existingClient = await Client.findById(client);
     if (!existingClient) {
       return res.status(404).json({ message: 'Client not found' });
     }
 
     let expeditionId;
-    
-    // If expedition is provided but has no ID, create it
-    if (expedition && !expedition._id) {
+
+    // 2️⃣ Handle Expedition (Create if Needed)
+    if (!expedition) {
+      return res.status(400).json({ message: 'Expedition is required' });
+    }
+
+    if (mongoose.isValidObjectId(expedition)) {
+      // If expedition is an ID string, use it directly
+      expeditionId = expedition;
+    } else if (typeof expedition === 'object' && !expedition._id) {
+      // If expedition is an object without an ID, create a new one
       const newExpedition = new Expedition({
         nom: expedition.nom,
         frais: expedition.frais
@@ -63,10 +77,10 @@ const createClientOrder = async (req, res) => {
       const savedExpedition = await newExpedition.save();
       expeditionId = savedExpedition._id;
     } else {
-      expeditionId = expedition._id;
+      return res.status(400).json({ message: 'Invalid expedition format' });
     }
 
-    // Validate articles
+    // 3️⃣ Validate Articles
     const validatedArticles = await Promise.all(
       articles.map(async (item) => {
         const articleExists = await Article.findById(item.article);
@@ -77,7 +91,7 @@ const createClientOrder = async (req, res) => {
       })
     );
 
-    // Create the client order
+    // 4️⃣ Create the Client Order
     const newOrder = new ClientOrder({
       codeCommande,
       dateCommande,
@@ -93,7 +107,7 @@ const createClientOrder = async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
-    
+
     res.status(201).json({
       message: 'Order created successfully',
       order: savedOrder
@@ -103,6 +117,7 @@ const createClientOrder = async (req, res) => {
     res.status(400).json({ message: 'Failed to create order', error: error.message });
   }
 };
+
 
 // Update a client order
 const updateClientOrder = async (req, res) => {

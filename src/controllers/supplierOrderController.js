@@ -29,6 +29,11 @@ const getSupplierOrderById = async (req, res) => {
 };
 
 // Create a new supplier order
+const mongoose = require('mongoose');
+const Supplier = require('../models/Supplier');
+const SupplierOrder = require('../models/SupplierOrder');
+const Article = require('../models/Article');
+
 const createSupplierOrder = async (req, res) => {
   try {
     const {
@@ -42,8 +47,16 @@ const createSupplierOrder = async (req, res) => {
 
     let fournisseurId;
 
-    // If fournisseur is provided but has no ID, create it
-    if (fournisseur && !fournisseur._id) {
+    // 1️⃣ Validate Supplier (Create if Needed)
+    if (!fournisseur) {
+      return res.status(400).json({ message: 'Supplier is required' });
+    }
+
+    if (mongoose.isValidObjectId(fournisseur)) {
+      // If supplier is an ID string, use it directly
+      fournisseurId = fournisseur;
+    } else if (typeof fournisseur === 'object' && !fournisseur._id) {
+      // If supplier is an object without an ID, create a new one
       const newSupplier = new Supplier({
         nom: fournisseur.nom,
         adresse: fournisseur.adresse,
@@ -52,10 +65,14 @@ const createSupplierOrder = async (req, res) => {
       const savedSupplier = await newSupplier.save();
       fournisseurId = savedSupplier._id;
     } else {
-      fournisseurId = fournisseur._id;
+      return res.status(400).json({ message: 'Invalid supplier format' });
     }
 
-    // Validate and update stock for each article
+    // 2️⃣ Validate and Update Stock for Articles
+    if (!articles || !Array.isArray(articles) || articles.length === 0) {
+      return res.status(400).json({ message: 'Articles are required' });
+    }
+
     const validatedArticles = await Promise.all(
       articles.map(async (item) => {
         const article = await Article.findById(item.article);
@@ -71,7 +88,7 @@ const createSupplierOrder = async (req, res) => {
       })
     );
 
-    // Create the supplier order
+    // 3️⃣ Create the Supplier Order
     const newOrder = new SupplierOrder({
       codeCommande,
       dateCommande,
@@ -82,7 +99,7 @@ const createSupplierOrder = async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
-    
+
     res.status(201).json({
       message: 'Supplier order created successfully',
       order: savedOrder
@@ -92,6 +109,8 @@ const createSupplierOrder = async (req, res) => {
     res.status(400).json({ message: 'Failed to create supplier order', error: error.message });
   }
 };
+
+module.exports = { createSupplierOrder };
 
 // Update a supplier order
 const updateSupplierOrder = async (req, res) => {

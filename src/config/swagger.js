@@ -6,7 +6,7 @@ const swaggerOptions = {
     info: {
       title: "API Documentation",
       version: "1.0.0",
-      description: "API for managing clients, suppliers, orders, and articles.",
+      description: "API for managing clients, suppliers, orders, expeditions, and articles.",
     },
     components: {
       schemas: {
@@ -46,26 +46,35 @@ const swaggerOptions = {
           },
           required: ["firstName", "lastName", "email", "phone"],
         },
-        ClientInvoice: {
+        ClientOrder: {
           type: "object",
           properties: {
-            orderId: { type: "string", description: "Linked order ID" },
+            clientId: { type: "string", description: "ID of the client placing the order" },
             products: {
               type: "array",
               items: {
                 type: "object",
                 properties: {
-                  productId: { type: "string", description: "Product ID" },
-                  quantity: { type: "integer", description: "Product quantity" },
-                  unitPrice: { type: "number", format: "float", description: "Unit price" },
-                  amount: { type: "number", format: "float", description: "Total price" },
+                  articleId: { type: "string", description: "ID of the article ordered" },
+                  quantity: { type: "integer", description: "Quantity ordered" },
+                  price: { type: "number", format: "float", description: "Price per unit" },
+                  total: { type: "number", format: "float", description: "Total price" },
                 },
-                required: ["productId", "quantity", "unitPrice"],
+                required: ["articleId", "quantity", "price"],
               },
             },
-            totalAmount: { type: "number", format: "float", description: "Total invoice amount" },
+            expedition: {
+              type: "object",
+              properties: {
+                _id: { type: "string", description: "Expedition ID (or created if missing)" },
+                nom: { type: "string", description: "Shipping name" },
+                frais: { type: "number", description: "Shipping cost", minimum: 0 },
+              },
+            },
+            totalAmount: { type: "number", format: "float", description: "Total order amount" },
+            status: { type: "string", enum: ["Pending", "Shipped", "Delivered"], description: "Order status" },
           },
-          required: ["orderId", "products", "totalAmount"],
+          required: ["clientId", "products", "totalAmount", "status"],
         },
         Supplier: {
           type: "object",
@@ -81,19 +90,49 @@ const swaggerOptions = {
           },
           required: ["firstName", "lastName", "email", "phone"],
         },
+        SupplierOrder: {
+          type: "object",
+          properties: {
+            codeCommande: { type: "string", description: "Unique supplier order code" },
+            dateCommande: { type: "string", format: "date", description: "Order date" },
+            fournisseur: {
+              type: "object",
+              properties: {
+                _id: { type: "string", description: "Supplier ID (or created if missing)" },
+                nom: { type: "string", description: "Supplier name" },
+                adresse: { type: "string", description: "Supplier address" },
+                contact: { type: "string", description: "Supplier contact" },
+              },
+            },
+            articles: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  article: { type: "string", description: "Article ID" },
+                  quantity: { type: "integer", description: "Quantity ordered" },
+                },
+                required: ["article", "quantity"],
+              },
+            },
+            etatCommande: { type: "string", enum: ["Pending", "Received", "Cancelled"], description: "Order status" },
+            total: { type: "number", format: "float", description: "Total order cost" },
+          },
+          required: ["codeCommande", "dateCommande", "fournisseur", "articles", "etatCommande", "total"],
+        },
         Expedition: {
           type: "object",
           properties: {
-            _id: { type: "integer", description: "Expedition ID (Custom numeric ID)" },
+            _id: { type: "string", description: "Expedition ID (Generated if missing)" },
             nom: { type: "string", description: "Shipping name" },
-            frais: { type: "number", description: "Shipping cost", minimum: 0 },
+            frais: { type: "number", format: "float", description: "Shipping cost", minimum: 0 },
           },
-          required: ["_id", "nom", "frais"],
+          required: ["nom", "frais"],
         },
       },
     },
   },
-  apis: ["./src/routes/*.js"],
+  apis: ["./src/routes/*.js"], // Ensure routes have proper Swagger comments
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);

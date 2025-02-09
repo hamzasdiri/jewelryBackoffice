@@ -1,10 +1,11 @@
 const SupplierOrder = require('../models/SupplierOrder');
+const Supplier = require('../models/Supplier'); // Assuming you have a Supplier model
 const Article = require('../models/Article'); // Assuming you have an Article model
 
 // Get all supplier orders
 const getSupplierOrders = async (req, res) => {
   try {
-    const orders = await SupplierOrder.find().populate('fournisseur');
+    const orders = await SupplierOrder.find().populate('fournisseur').populate('articles.article');
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch supplier orders', error });
@@ -14,80 +15,162 @@ const getSupplierOrders = async (req, res) => {
 // Get a single supplier order by ID
 const getSupplierOrderById = async (req, res) => {
   try {
-    const order = await SupplierOrder.findById(req.params.id).populate('fournisseur');
+    const { id } = req.params;
+    const order = await SupplierOrder.findById(id).populate('fournisseur').populate('articles.article');
+
     if (!order) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
+
     res.json(order);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch supplier order', error });
   }
 };
 
-// Add a new supplier order
-const addSupplierOrder = async (req, res) => {
+// Create a new supplier order
+const createSupplierOrder = async (req, res) => {
   try {
-    const newOrder = new SupplierOrder(req.body);
+    const {
+      codeCommande,
+      dateCommande,
+      fournisseur,
+      articles,
+      etatCommande,
+      total
+    } = req.body;
 
-    // Update article quantity when a new order is placed
-    const article = await Article.findOne({ codeArticle: newOrder.codeArticle });
+    let fournisseurId;
 
-    if (!article) {
-      return res.status(404).json({ message: `Article with code ${newOrder.codeArticle} not found` });
+    // If fournisseur is provided but has no ID, create it
+    if (fournisseur && !fournisseur._id) {
+      const newSupplier = new Supplier({
+        nom: fournisseur.nom,
+        adresse: fournisseur.adresse,
+        contact: fournisseur.contact
+      });
+      const savedSupplier = await newSupplier.save();
+      fournisseurId = savedSupplier._id;
+    } else {
+      fournisseurId = fournisseur._id;
     }
 
-    article.quantity += newOrder.quantite; // Increase stock
-    await article.save();
+    // Validate and update stock for each article
+    const validatedArticles = await Promise.all(
+      articles.map(async (item) => {
+        const article = await Article.findById(item.article);
+        if (!article) {
+          throw new Error(`Article not found: ${item.article}`);
+        }
 
-    await newOrder.save();
-    res.status(201).json(newOrder);
+        // Increase stock when a supplier order is placed
+        article.quantity += item.quantity;
+        await article.save();
+
+        return item;
+      })
+    );
+
+    // Create the supplier order
+    const newOrder = new SupplierOrder({
+      codeCommande,
+      dateCommande,
+      fournisseur: fournisseurId,
+      articles: validatedArticles,
+      etatCommande,
+      total
+    });
+
+    const savedOrder = await newOrder.save();
+    
+    res.status(201).json({
+      message: 'Supplier order created successfully',
+      order: savedOrder
+    });
+
   } catch (error) {
-    res.status(400).json({ message: 'Failed to add supplier order', error });
+    res.status(400).json({ message: 'Failed to create supplier order', error: error.message });
   }
 };
 
-// Update an existing supplier order
+// Update a supplier order
 const updateSupplierOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedOrder = await SupplierOrder.findByIdAndUpdate(id, req.body, { new: true });
+    const {
+      fournisseur,
+      articles
+    } = req.body;
+
+    let fournisseurId;
+
+    // If fournisseur is provided but has no ID, create it
+    if (fournisseur && !fournisseur._id) {
+      const newSupplier = new Supplier({
+        nom: fournisseur.nom,
+        adresse: fournisseur.adresse,
+        contact: fournisseur.contact
+      });
+      const savedSupplier = await newSupplier.save();
+      fournisseurId = savedSupplier._id;
+    } else {
+      fournisseurId = fournisseur ? fournisseur._id : undefined;
+    }
+
+    // Validate and update stock for articles if provided
+    let validatedArticles;
+    if (articles) {
+      validatedArticles = await Promise.all(
+        articles.map(async (item) => {
+          const article = await Article.findById(item.article);
+          if (!article) {
+            throw new Error(`Article not found: ${item.article}`);
+          }
+          return item;
+        })
+      );
+    }
+
+    const updatedOrder = await SupplierOrder.findByIdAndUpdate(
+      id,
+      {
+        ...req.body,
+        fournisseur: fournisseurId || req.body.fournisseur,
+        articles: validatedArticles || req.body.articles
+      },
+      { new: true }
+    );
 
     if (!updatedOrder) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
 
-    // Handle article quantity updates
-    const article = await Article.findOne({ codeArticle: updatedOrder.codeArticle });
-
-    if (!article) {
-      return res.status(404).json({ message: `Article with code ${updatedOrder.codeArticle} not found` });
-    }
-
-    article.quantity += updatedOrder.quantite; // Adjust stock
-    await article.save();
-
     res.json(updatedOrder);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to update supplier order', error });
+    res.status(400).json({ message: 'Failed to update supplier order', error: error.message });
   }
 };
 
 // Delete a supplier order
 const deleteSupplierOrder = async (req, res) => {
   try {
-    const deletedOrder = await SupplierOrder.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+    const deletedOrder = await SupplierOrder.findByIdAndDelete(id);
 
     if (!deletedOrder) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
 
     // Revert stock changes when an order is deleted
-    const article = await Article.findOne({ codeArticle: deletedOrder.codeArticle });
-
-    if (article) {
-      article.quantity -= deletedOrder.quantite; // Reduce stock
-      await article.save();
-    }
+    await Promise.all(
+      deletedOrder.articles.map(async (item) => {
+        const article = await Article.findById(item.article);
+        if (article) {
+          article.quantity -= item.quantity; // Reduce stock
+          await article.save();
+        }
+      })
+    );
 
     res.json({ message: 'Supplier order deleted successfully' });
   } catch (error) {
@@ -98,7 +181,7 @@ const deleteSupplierOrder = async (req, res) => {
 module.exports = {
   getSupplierOrders,
   getSupplierOrderById,
-  addSupplierOrder,
+  createSupplierOrder,
   updateSupplierOrder,
   deleteSupplierOrder,
 };

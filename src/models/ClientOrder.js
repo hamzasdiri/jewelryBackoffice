@@ -10,7 +10,7 @@ const clientOrderSchema = new mongoose.Schema({
   },
   expedition: { 
     type: mongoose.Schema.Types.Mixed, // Can be an ObjectId or an embedded object
-    required: true
+    required: false
   },  
   noteLivraison: { type: String },
   modePaiment: { type: String, required: true },

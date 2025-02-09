@@ -9,10 +9,9 @@ const clientOrderSchema = new mongoose.Schema({
     required: true 
   },
   expedition: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Expedition', 
-    required: true 
-  }, // Updated to reference Expedition
+    type: mongoose.Schema.Types.Mixed, // Can be an ObjectId or an embedded object
+    required: true
+  },  
   noteLivraison: { type: String },
   modePaiment: { type: String, required: true },
   codeSuivi: { type: String },

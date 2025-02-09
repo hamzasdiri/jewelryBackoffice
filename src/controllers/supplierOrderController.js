@@ -29,15 +29,15 @@ const addSupplierOrder = async (req, res) => {
   try {
     const newOrder = new SupplierOrder(req.body);
 
-    // Update article quantities (increase) when a new order is placed
-    for (const item of newOrder.articles || []) {
-      const article = await Article.findById(item.article);
-      if (!article) {
-        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
-      }
-      article.quantity += item.quantity; // Increase quantity by the ordered amount
-      await article.save();
+    // Update article quantity when a new order is placed
+    const article = await Article.findOne({ codeArticle: newOrder.codeArticle });
+
+    if (!article) {
+      return res.status(404).json({ message: `Article with code ${newOrder.codeArticle} not found` });
     }
+
+    article.quantity += newOrder.quantite; // Increase stock
+    await article.save();
 
     await newOrder.save();
     res.status(201).json(newOrder);
@@ -49,27 +49,22 @@ const addSupplierOrder = async (req, res) => {
 // Update an existing supplier order
 const updateSupplierOrder = async (req, res) => {
   try {
-    const updatedOrder = await SupplierOrder.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { id } = req.params;
+    const updatedOrder = await SupplierOrder.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updatedOrder) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
 
-    // Handle article quantity updates (increase or decrease based on changes)
-    for (const item of req.body.articles || []) {
-      const article = await Article.findById(item.article);
-      if (!article) {
-        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
-      }
+    // Handle article quantity updates
+    const article = await Article.findOne({ codeArticle: updatedOrder.codeArticle });
 
-      // If quantity has increased, add the quantity
-      if (item.quantity > 0) {
-        article.quantity += item.quantity;
-      } else if (item.quantity < 0) {
-        article.quantity += item.quantity; // Decrease quantity
-      }
-      await article.save();
+    if (!article) {
+      return res.status(404).json({ message: `Article with code ${updatedOrder.codeArticle} not found` });
     }
+
+    article.quantity += updatedOrder.quantite; // Adjust stock
+    await article.save();
 
     res.json(updatedOrder);
   } catch (error) {
@@ -81,17 +76,17 @@ const updateSupplierOrder = async (req, res) => {
 const deleteSupplierOrder = async (req, res) => {
   try {
     const deletedOrder = await SupplierOrder.findByIdAndDelete(req.params.id);
+
     if (!deletedOrder) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
 
-    // Optional: Update article quantities when an order is deleted
-    for (const item of deletedOrder.articles || []) {
-      const article = await Article.findById(item.article);
-      if (article) {
-        article.quantity -= item.quantity; // Revert quantity increase
-        await article.save();
-      }
+    // Revert stock changes when an order is deleted
+    const article = await Article.findOne({ codeArticle: deletedOrder.codeArticle });
+
+    if (article) {
+      article.quantity -= deletedOrder.quantite; // Reduce stock
+      await article.save();
     }
 
     res.json({ message: 'Supplier order deleted successfully' });

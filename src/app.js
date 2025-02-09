@@ -11,6 +11,7 @@ const supplierOrderRoutes = require('./routes/supplierOrderRoutes');
 const clientOrderRoutes = require('./routes/clientOrderRoutes');
 const clientInvoiceRoutes = require('./routes/clientInvoiceRoutes');
 const articleRoutes = require('./routes/articleRoutes');
+const expeditionRoutes = require('./routes/expeditionRoutes');
 
 const app = express();
 
@@ -34,5 +35,5 @@ app.use('/api/supplier-orders', supplierOrderRoutes);
 app.use('/api/client-orders', clientOrderRoutes);
 app.use('/api/client-invoice', clientInvoiceRoutes);
 app.use('/api/articles', articleRoutes);
-
+app.use('/api/expeditions', expeditionRoutes);
 module.exports = app;

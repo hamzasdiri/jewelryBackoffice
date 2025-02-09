@@ -1,121 +1,78 @@
-// src/controllers/clientOrderController.js
-const ClientOrder = require('../models/ClientOrder');
-const Article = require('../models/Article');  // Import Article model
+const Client = require('../models/Client');
 
-// Get all client orders
-const getClientOrders = async (req, res) => {
+// Fetch all clients
+const getClients = async (req, res) => {
   try {
-    const orders = await ClientOrder.find();
-    res.json(orders);
+    const clients = await Client.find();
+    res.json(clients);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch client orders', error: error.message });
+    res.status(500).json({ message: 'Failed to fetch clients', error });
   }
 };
 
-// Get a single client order by ID
-const getClientOrderById = async (req, res) => {
+// Fetch a client by ID
+const getClientById = async (req, res) => {
   try {
-    const order = await ClientOrder.findById(req.params.id).populate('articles.article');
-    if (!order) {
-      return res.status(404).json({ message: 'Client order not found' });
+    const { id } = req.params;
+    const client = await Client.findById(id);
+    
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
     }
-    res.json(order);
+
+    res.json(client);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch client order', error: error.message });
+    res.status(500).json({ message: 'Failed to fetch client', error });
   }
 };
 
-// Add a new client order
-const addClientOrder = async (req, res) => {
+// Add a new client
+const addClient = async (req, res) => {
   try {
-    const newOrder = new ClientOrder(req.body);
-
-    // Update article quantities (decrease)
-    const articles = await Article.find({ '_id': { $in: newOrder.articles.map(item => item.article) } });
-
-    for (const item of newOrder.articles) {
-      const article = articles.find(a => a._id.toString() === item.article.toString());
-      if (!article) {
-        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
-      }
-      if (article.quantity < item.quantity) {
-        return res.status(400).json({ message: `Not enough stock for article ${item.article}` });
-      }
-      article.quantity -= item.quantity; // Decrease quantity by the ordered amount
-      await article.save();
-    }
-
-    await newOrder.save();
-    res.status(201).json(newOrder);
+    const client = new Client(req.body);
+    await client.save();
+    res.status(201).json(client);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to add client order', error: error.message });
+    res.status(400).json({ message: 'Failed to add client', error });
   }
 };
 
-// Update an existing client order
-const updateClientOrder = async (req, res) => {
+// Update a client
+const updateClient = async (req, res) => {
   try {
-    const updatedOrder = await ClientOrder.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { id } = req.params;
+    const updatedClient = await Client.findByIdAndUpdate(id, req.body, { new: true });
 
-    if (!updatedOrder) {
-      return res.status(404).json({ message: 'Client order not found' });
+    if (!updatedClient) {
+      return res.status(404).json({ message: 'Client not found' });
     }
 
-    // Update article quantities (decrease or increase based on changes)
-    const articles = await Article.find({ '_id': { $in: req.body.articles.map(item => item.article) } });
-
-    for (const item of req.body.articles || []) {
-      const article = articles.find(a => a._id.toString() === item.article.toString());
-      if (!article) {
-        return res.status(404).json({ message: `Article with ID ${item.article} not found` });
-      }
-
-      // If the quantity has decreased
-      if (item.quantity > 0) {
-        if (article.quantity < item.quantity) {
-          return res.status(400).json({ message: `Not enough stock for article ${item.article}` });
-        }
-        article.quantity -= item.quantity;
-      } else {
-        // If the quantity has increased
-        article.quantity += Math.abs(item.quantity);
-      }
-      await article.save();
-    }
-
-    res.json(updatedOrder);
+    res.json(updatedClient);
   } catch (error) {
-    res.status(400).json({ message: 'Failed to update client order', error: error.message });
+    res.status(400).json({ message: 'Failed to update client', error });
   }
 };
 
-// Delete a client order
-const deleteClientOrder = async (req, res) => {
+// Delete a client
+const deleteClient = async (req, res) => {
   try {
-    const deletedOrder = await ClientOrder.findByIdAndDelete(req.params.id);
-    if (!deletedOrder) {
-      return res.status(404).json({ message: 'Client order not found' });
+    const { id } = req.params;
+    const deletedClient = await Client.findByIdAndDelete(id);
+
+    if (!deletedClient) {
+      return res.status(404).json({ message: 'Client not found' });
     }
 
-    // Optionally, restore article quantities after order deletion
-    for (const item of deletedOrder.articles) {
-      const article = await Article.findById(item.article);
-      if (article) {
-        article.quantity += item.quantity;
-        await article.save();
-      }
-    }
-
-    res.json({ message: 'Client order deleted successfully' });
+    res.json({ message: 'Client deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete client order', error: error.message });
+    res.status(500).json({ message: 'Failed to delete client', error });
   }
 };
 
 module.exports = {
-  getClientOrders,
-  getClientOrderById,
-  addClientOrder,
-  updateClientOrder,
-  deleteClientOrder,
+  getClients,
+  getClientById,
+  addClient,
+  updateClient,
+  deleteClient,
 };

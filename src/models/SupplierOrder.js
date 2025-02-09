@@ -9,10 +9,9 @@ const supplierOrderSchema = new mongoose.Schema({
     required: true 
   },
   expedition: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Expedition', 
-    required: true 
-  }, // Updated to reference Expedition
+    type: mongoose.Schema.Types.Mixed, // Can be an ObjectId or an embedded object
+    required: true
+  },  
   noteLivraison: { type: String }, // Delivery note
   modePaiment: { type: String, required: true }, // Payment method
   codeSuivi: { type: String, required: true },

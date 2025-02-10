@@ -3,7 +3,12 @@ const express = require('express');
 const { getClientInvoice } = require('../controllers/clientInvoiceController');
 
 const router = express.Router();
-
+/**
+ * @swagger
+ * tags:
+ *   name: Expeditions
+ *   description: API for managing client invoices
+ */
 /**
  * @swagger
  * /api/client-invoices/{orderId}:

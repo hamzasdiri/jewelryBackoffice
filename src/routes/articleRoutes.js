@@ -8,7 +8,12 @@ const {
 } = require('../controllers/articleController');
 
 const router = express.Router();
-
+/**
+ * @swagger
+ * tags:
+ *   name: Expeditions
+ *   description: API for managing Articles
+ */
 /**
  * @swagger
  * /api/articles:

@@ -7,7 +7,12 @@ const {
 } = require('../controllers/categoryController');
 
 const router = express.Router();
-
+/**
+ * @swagger
+ * tags:
+ *   name: Expeditions
+ *   description: API for managing Categories
+ */
 /**
  * @swagger
  * /api/categories:

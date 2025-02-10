@@ -9,7 +9,12 @@ const {
 } = require('../controllers/supplierOrderController');
 
 const router = express.Router();
-
+/**
+ * @swagger
+ * tags:
+ *   name: Expeditions
+ *   description: API for managing supplier orders
+ */
 /**
  * @swagger
  * /api/supplier-orders:

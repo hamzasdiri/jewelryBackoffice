@@ -30,9 +30,6 @@ const getSupplierOrderById = async (req, res) => {
 
 // Create a new supplier order
 const mongoose = require('mongoose');
-const Supplier = require('../models/Supplier');
-const SupplierOrder = require('../models/SupplierOrder');
-const Article = require('../models/Article');
 
 const createSupplierOrder = async (req, res) => {
   try {

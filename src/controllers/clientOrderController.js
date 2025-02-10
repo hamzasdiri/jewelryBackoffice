@@ -31,10 +31,6 @@ const getClientOrderById = async (req, res) => {
 
 // Create a new client order
 const mongoose = require('mongoose');
-const Client = require('../models/Client');
-const Expedition = require('../models/Expedition');
-const Article = require('../models/Article');
-const ClientOrder = require('../models/ClientOrder');
 
 const createClientOrder = async (req, res) => {
   try {

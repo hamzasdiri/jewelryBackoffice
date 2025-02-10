@@ -3,7 +3,7 @@ const express = require('express');
 const {
   getSupplierOrders,
   getSupplierOrderById,
-  addSupplierOrder,
+  createSupplierOrder,
   updateSupplierOrder,
   deleteSupplierOrder,
 } = require('../controllers/supplierOrderController');
@@ -71,7 +71,7 @@ router.get('/:id', getSupplierOrderById);
  *       400:
  *         description: Bad request
  */
-router.post('/', addSupplierOrder);
+router.post('/', createSupplierOrder);
 
 /**
  * @swagger

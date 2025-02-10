@@ -3,7 +3,7 @@ const express = require('express');
 const {
   getClientOrders,
   getClientOrderById,
-  addClientOrder,
+  createClientOrder,
   updateClientOrder,
   deleteClientOrder,
 } = require('../controllers/clientOrderController');
@@ -73,7 +73,7 @@ router.get('/:id', getClientOrderById);
  *             schema:
  *               $ref: '#/components/schemas/ClientOrder'
  */
-router.post('/', addClientOrder);
+router.post('/', createClientOrder);
 
 /**
  * @swagger

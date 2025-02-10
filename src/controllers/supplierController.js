@@ -11,24 +11,6 @@ const getSuppliers = async (req, res) => {
   }
 };
 
-// Fetch a supplier by ID
-const getSupplierById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Find the supplier based on the ID
-    const supplier = await Supplier.findById(id);
-
-    if (!supplier) {
-      return res.status(404).json({ message: 'Supplier not found' });
-    }
-
-    res.json(supplier);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch supplier', error });
-  }
-};
-
 // Add a new supplier
 const addSupplier = async (req, res) => {
   try {
@@ -70,7 +52,6 @@ const deleteSupplier = async (req, res) => {
 
 module.exports = {
   getSuppliers,
-  getSupplierById,
   addSupplier,
   updateSupplier,
   deleteSupplier,

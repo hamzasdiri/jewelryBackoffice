@@ -4,13 +4,6 @@ const expeditionController = require('../controllers/expeditionController');
 
 /**
  * @swagger
- * tags:
- *   name: Expeditions
- *   description: API for managing expeditions
- */
-
-/**
- * @swagger
  * /api/expeditions:
  *   get:
  *     summary: Get all expeditions

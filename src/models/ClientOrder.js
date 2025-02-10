@@ -9,9 +9,11 @@ const clientOrderSchema = new mongoose.Schema({
     required: true 
   },
   expedition: { 
-    type: mongoose.Schema.Types.Mixed, // Can be an ObjectId or an embedded object
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Expedition', 
     required: false
   },  
+
   noteLivraison: { type: String },
   modePaiment: { type: String, required: true },
   codeSuivi: { type: String },
@@ -25,9 +27,7 @@ const clientOrderSchema = new mongoose.Schema({
       quantity: { type: Number, required: true }, // Quantity of this article in the order
     },
   ],
-  etatCommande: { type: String, required: true },
-  freeShipping: { type: Boolean, default: false }, // New field
-  total: { type: Number, required: true, min: 0 }, // New field
+  etatCommande: { type: String, required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('ClientOrder', clientOrderSchema);

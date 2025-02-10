@@ -1,4 +1,3 @@
-// src/routes/clientOrderRoutes.js
 const express = require('express');
 const {
   getClientOrders,
@@ -9,18 +8,87 @@ const {
 } = require('../controllers/clientOrderController');
 
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
- *   name: Expeditions
+ *   name: ClientOrders
  *   description: API for managing client orders
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ClientOrder:
+ *       type: object
+ *       required:
+ *         - codeCommande
+ *         - dateCommande
+ *         - client
+ *         - modePaiment
+ *         - articles
+ *         - etatCommande
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Unique identifier of the client order
+ *         codeCommande:
+ *           type: string
+ *           description: Unique order code
+ *         dateCommande:
+ *           type: string
+ *           format: date
+ *           description: Date of the order
+ *         client:
+ *           type: string
+ *           description: Reference to the client ID
+ *         expedition:
+ *           type: string
+ *           nullable: true
+ *           description: Reference to the expedition ID (if applicable)
+ *         noteLivraison:
+ *           type: string
+ *           description: Delivery note
+ *         modePaiment:
+ *           type: string
+ *           description: Payment method
+ *         codeSuivi:
+ *           type: string
+ *           description: Tracking code (if applicable)
+ *         articles:
+ *           type: array
+ *           items:
+ *             type: object
+ *             required:
+ *               - article
+ *               - quantity
+ *             properties:
+ *               article:
+ *                 type: string
+ *                 description: Reference to the article ID
+ *               quantity:
+ *                 type: integer
+ *                 description: Quantity of the article in the order
+ *         etatCommande:
+ *           type: string
+ *           description: Status of the order
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Timestamp when the order was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Timestamp when the order was last updated
+ */
+
 /**
  * @swagger
  * /api/client-orders:
  *   get:
  *     summary: Fetch all client orders
- *     description: Retrieves a list of all client orders
+ *     tags: [ClientOrders]
  *     responses:
  *       200:
  *         description: A list of client orders
@@ -37,8 +105,8 @@ router.get('/', getClientOrders);
  * @swagger
  * /api/client-orders/{id}:
  *   get:
- *     summary: Fetch a client order by ID
- *     description: Retrieves a specific client order using the provided order ID
+ *     summary: Get a specific client order by ID
+ *     tags: [ClientOrders]
  *     parameters:
  *       - name: id
  *         in: path
@@ -48,7 +116,7 @@ router.get('/', getClientOrders);
  *           type: string
  *     responses:
  *       200:
- *         description: A specific client order
+ *         description: Client order details
  *         content:
  *           application/json:
  *             schema:
@@ -62,8 +130,8 @@ router.get('/:id', getClientOrderById);
  * @swagger
  * /api/client-orders:
  *   post:
- *     summary: Add a new client order
- *     description: Creates a new client order
+ *     summary: Create a new client order
+ *     tags: [ClientOrders]
  *     requestBody:
  *       required: true
  *       content:
@@ -73,10 +141,8 @@ router.get('/:id', getClientOrderById);
  *     responses:
  *       201:
  *         description: Client order successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ClientOrder'
+ *       400:
+ *         description: Invalid data provided
  */
 router.post('/', createClientOrder);
 
@@ -85,7 +151,7 @@ router.post('/', createClientOrder);
  * /api/client-orders/{id}:
  *   put:
  *     summary: Update an existing client order
- *     description: Updates an existing client order using the provided order ID
+ *     tags: [ClientOrders]
  *     parameters:
  *       - name: id
  *         in: path
@@ -102,12 +168,10 @@ router.post('/', createClientOrder);
  *     responses:
  *       200:
  *         description: Client order successfully updated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ClientOrder'
  *       404:
  *         description: Client order not found
+ *       400:
+ *         description: Invalid data provided
  */
 router.put('/:id', updateClientOrder);
 
@@ -115,8 +179,8 @@ router.put('/:id', updateClientOrder);
  * @swagger
  * /api/client-orders/{id}:
  *   delete:
- *     summary: Delete a client order by ID
- *     description: Deletes the specified client order by ID
+ *     summary: Delete a client order
+ *     tags: [ClientOrders]
  *     parameters:
  *       - name: id
  *         in: path
@@ -125,7 +189,7 @@ router.put('/:id', updateClientOrder);
  *         schema:
  *           type: string
  *     responses:
- *       200:
+ *       204:
  *         description: Client order successfully deleted
  *       404:
  *         description: Client order not found

@@ -7,18 +7,21 @@ const {
 } = require('../controllers/categoryController');
 
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
- *   name: Expeditions
- *   description: API for managing Categories
+ *   - name: Categories  # 🔹 Fixed Typo ("Catgeries" -> "Categories")
+ *     description: API for managing Categories
  */
+
 /**
  * @swagger
  * /api/categories:
  *   get:
  *     summary: Fetch all categories
  *     description: Retrieves a list of all categories
+ *     tags: [Categories]  # 🔹 Added this
  *     responses:
  *       200:
  *         description: A list of categories
@@ -37,6 +40,7 @@ router.get('/', getCategories);
  *   post:
  *     summary: Add a new category
  *     description: Creates a new category with the provided details
+ *     tags: [Categories]  # 🔹 Added this
  *     requestBody:
  *       description: Category object that needs to be added
  *       required: true
@@ -60,6 +64,7 @@ router.post('/', addCategory);
  *   put:
  *     summary: Update an existing category
  *     description: Updates the category with the specified code
+ *     tags: [Categories]  # 🔹 Added this
  *     parameters:
  *       - name: code
  *         in: path
@@ -92,6 +97,7 @@ router.put('/:code', updateCategory);
  *   delete:
  *     summary: Delete a category
  *     description: Deletes the category with the specified code
+ *     tags: [Categories]  # 🔹 Added this
  *     parameters:
  *       - name: code
  *         in: path

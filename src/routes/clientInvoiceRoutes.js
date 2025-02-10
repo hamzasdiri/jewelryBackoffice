@@ -3,18 +3,21 @@ const express = require('express');
 const { getClientInvoice } = require('../controllers/clientInvoiceController');
 
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
- *   name: Expeditions
- *   description: API for managing client invoices
+ *   - name: Client Invoices  # 🔹 Changed from "Expeditions" to "Client Invoices"
+ *     description: API for managing client invoices
  */
+
 /**
  * @swagger
  * /api/client-invoices/{orderId}:
  *   get:
  *     summary: Fetch client invoice by order ID
  *     description: Retrieves the client invoice associated with the specified order ID
+ *     tags: [Client Invoices]  # 🔹 Added correct tag
  *     parameters:
  *       - name: orderId
  *         in: path

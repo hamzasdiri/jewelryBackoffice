@@ -16,29 +16,23 @@ const ClientSchema = new mongoose.Schema({
     unique: true,
   },
   url: {
-    type: String,
-    required: false
+    type: String
   },
   phone: {
     type: String,
     required: true,
   },
   address1: {
-    type: String,
-    required: true,
+    type: String
   },
   address2: {
-    type: String,
-    required: false,
+    type: String
   },
   city: {
-    type: String,
-    required: true,
+    type: String
   },
   country: {
-    type: String,
-    required: true,
-  },
+    type: String  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Client', ClientSchema);

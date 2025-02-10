@@ -5,12 +5,17 @@ const Article = require('../models/Article'); // Assuming you have an Article mo
 // Get all supplier orders
 const getSupplierOrders = async (req, res) => {
   try {
-    const orders = await SupplierOrder.find().populate('fournisseur').populate('articles.article');
+    const orders = await SupplierOrder.find()
+      .populate({ path: 'fournisseur', match: {} }) // Returns null if fournisseur is invalid
+      .populate({ path: 'expedition', match: {} }); // Returns null if article is invalid
+
     res.json(orders);
   } catch (error) {
+    console.error("Error fetching supplier orders:", error);
     res.status(500).json({ message: 'Failed to fetch supplier orders', error });
   }
 };
+
 
 // Get a single supplier order by ID
 const getSupplierOrderById = async (req, res) => {

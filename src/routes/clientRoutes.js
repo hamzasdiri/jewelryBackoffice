@@ -8,18 +8,21 @@ const {
 } = require('../controllers/clientController');
 
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
- *   name: Expeditions
+ *   name: Clients  # ✅ Fixed incorrect tag (was "Expeditions")
  *   description: API for managing clients
  */
+
 /**
  * @swagger
  * /api/clients:
  *   get:
  *     summary: Fetch all clients
  *     description: Retrieves a list of all clients
+ *     tags: [Clients]  # ✅ Added correct tag
  *     responses:
  *       200:
  *         description: A list of clients
@@ -38,6 +41,7 @@ router.get('/', getClients);
  *   post:
  *     summary: Add a new client
  *     description: Creates a new client with the provided details
+ *     tags: [Clients]  # ✅ Added correct tag
  *     requestBody:
  *       description: Client object that needs to be added
  *       required: true
@@ -59,6 +63,7 @@ router.post('/', addClient);
  *   put:
  *     summary: Update an existing client
  *     description: Updates the client details based on the client ID
+ *     tags: [Clients]  # ✅ Added correct tag
  *     parameters:
  *       - in: path
  *         name: clientId
@@ -89,6 +94,7 @@ router.put('/:clientId', updateClient);
  *   delete:
  *     summary: Delete a client
  *     description: Deletes the client based on the client ID
+ *     tags: [Clients]  # ✅ Added correct tag
  *     parameters:
  *       - in: path
  *         name: clientId

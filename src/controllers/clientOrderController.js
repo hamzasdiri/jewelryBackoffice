@@ -1,10 +1,21 @@
+// Create a new client order
+const mongoose = require('mongoose');
+const ClientOrder = require('../models/ClientOrder');
+const Client = require('../models/Client');
+const Expedition = require('../models/Expedition'); 
+const Article = require('../models/Article'); 
 
 // Get all client orders
 const getClientOrders = async (req, res) => {
   try {
-    const orders = await ClientOrder.find().populate('client').populate('expedition').populate('articles.article');
+    const orders = await ClientOrder.find()
+      .populate({ path: 'client', match: {} }) // If no match, will return null
+      .populate({ path: 'expedition', match: {} }) // If invalid, will return null
+      .populate({ path: 'articles.article', match: {} }); // If invalid article, will return null
+
     res.json(orders);
   } catch (error) {
+    console.error("Error fetching orders:", error);
     res.status(500).json({ message: 'Failed to fetch client orders', error });
   }
 };
@@ -25,8 +36,7 @@ const getClientOrderById = async (req, res) => {
   }
 };
 
-// Create a new client order
-const mongoose = require('mongoose');
+
 
 const createClientOrder = async (req, res) => {
   try {

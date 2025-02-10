@@ -2,12 +2,12 @@ const Expedition = require('../models/Expedition');
 
 // Get all expeditions
 exports.getAllExpeditions = async (req, res) => {
-  try {
-    const expeditions = await Expedition.find();
-    res.json(expeditions);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const expeditions = await Expedition.find();
+        res.json(expeditions);
+      } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch expeditions', error });
+      }
 };
 
 // Get a single expedition by ID

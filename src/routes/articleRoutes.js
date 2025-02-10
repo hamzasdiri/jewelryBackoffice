@@ -8,18 +8,21 @@ const {
 } = require('../controllers/articleController');
 
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
- *   name: Expeditions
- *   description: API for managing Articles
+ *   - name: Articles
+ *     description: API for managing Articles
  */
+
 /**
  * @swagger
  * /api/articles:
  *   get:
  *     summary: Fetch all articles
  *     description: Retrieves a list of all articles
+ *     tags: [Articles]  # 🔹 Add this line to group under "Articles"
  *     responses:
  *       200:
  *         description: A list of articles
@@ -38,6 +41,7 @@ router.get('/', getArticles);
  *   post:
  *     summary: Add a new article
  *     description: Creates a new article with the provided details
+ *     tags: [Articles]  # 🔹 Add this line
  *     requestBody:
  *       description: Article object that needs to be added
  *       required: true
@@ -53,7 +57,7 @@ router.get('/', getArticles);
  *             schema:
  *               $ref: '#/components/schemas/Article'
  */
-router.post('/', upload.single('image'), addArticle); // Handle file upload for image
+router.post('/', upload.single('image'), addArticle);
 
 /**
  * @swagger
@@ -61,6 +65,7 @@ router.post('/', upload.single('image'), addArticle); // Handle file upload for 
  *   put:
  *     summary: Update an article
  *     description: Updates an existing article by its ID
+ *     tags: [Articles]  # 🔹 Add this line
  *     parameters:
  *       - name: id
  *         in: path
@@ -85,7 +90,7 @@ router.post('/', upload.single('image'), addArticle); // Handle file upload for 
  *       404:
  *         description: Article not found
  */
-router.put('/:id', upload.single('image'), updateArticle); // Handle file upload for image
+router.put('/:id', upload.single('image'), updateArticle);
 
 /**
  * @swagger
@@ -93,6 +98,7 @@ router.put('/:id', upload.single('image'), updateArticle); // Handle file upload
  *   delete:
  *     summary: Delete an article
  *     description: Deletes an article by its ID
+ *     tags: [Articles]  # 🔹 Add this line
  *     parameters:
  *       - name: id
  *         in: path

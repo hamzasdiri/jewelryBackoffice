@@ -1,7 +1,3 @@
-const ClientOrder = require('../models/ClientOrder');
-const Expedition = require('../models/Expedition');
-const Client = require('../models/Client');
-const Article = require('../models/Article');
 
 // Get all client orders
 const getClientOrders = async (req, res) => {

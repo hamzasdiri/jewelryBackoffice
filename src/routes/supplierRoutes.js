@@ -4,6 +4,7 @@ const {
   addSupplier,
   updateSupplier,
   deleteSupplier,
+  getSupplierById
 } = require('../controllers/supplierController');
 
 const router = express.Router();
@@ -140,5 +141,30 @@ router.put('/:id', updateSupplier);
  *         description: Supplier not found
  */
 router.delete('/:id', deleteSupplier);
+
+/**
+ * @swagger
+ * /api/suppliers/{id}:
+ *   get:
+ *     summary: Get an supplier by ID
+ *     tags: [Suppliers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the supplier
+ *         schema:
+ *           type: string  # 🔹 Changed to string for MongoDB compatibility
+ *     responses:
+ *       200:
+ *         description: Supplier data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Supplier'
+ *       404:
+ *         description: Supplier not found
+ */
+router.get('/:id', getSupplierById);
 
 module.exports = router;

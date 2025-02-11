@@ -50,9 +50,24 @@ const deleteSupplier = async (req, res) => {
   }
 };
 
+const getSupplierById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const supplier = await Supplier.findById(id);
+    if (!supplier) {
+      return res.status(404).json({ message: 'Supplier not found' });
+    }
+
+    res.json(supplier);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch supplier', error });
+  }
+};
+
 module.exports = {
   getSuppliers,
   addSupplier,
   updateSupplier,
   deleteSupplier,
+  getSupplierById,
 };

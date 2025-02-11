@@ -5,6 +5,7 @@ const {
   addClient,
   updateClient,
   deleteClient,
+  getClientById
 } = require('../controllers/clientController');
 
 const router = express.Router();
@@ -109,5 +110,30 @@ router.put('/:clientId', updateClient);
  *         description: Client not found
  */
 router.delete('/:clientId', deleteClient);
+
+/**
+ * @swagger
+ * /api/clients/{id}:
+ *   get:
+ *     summary: Get an client by ID
+ *     tags: [Clients]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the client
+ *         schema:
+ *           type: string  # 🔹 Changed to string for MongoDB compatibility
+ *     responses:
+ *       200:
+ *         description: Client data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Client'
+ *       404:
+ *         description: Client not found
+ */
+router.get('/:id', getClientById);
 
 module.exports = router;

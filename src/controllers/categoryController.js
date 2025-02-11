@@ -50,9 +50,24 @@ const deleteCategory = async (req, res) => {
   }
 };
 
+const getCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const category = await Category.findById(id);
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch category', error });
+  }
+};
+
 module.exports = {
   getCategories,
   addCategory,
   updateCategory,
   deleteCategory,
+  getCategoryById
 };

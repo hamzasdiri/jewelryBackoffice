@@ -49,33 +49,41 @@ const swaggerOptions = {
         ClientOrder: {
           type: "object",
           properties: {
+            codeCommande: { type: "string", description: "Unique order code" },
+            dateCommande: { type: "string", format: "date", description: "Order date" },
             clientId: { type: "string", description: "ID of the client placing the order" },
-            products: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  articleId: { type: "string", description: "ID of the article ordered" },
-                  quantity: { type: "integer", description: "Quantity ordered" },
-                  price: { type: "number", format: "float", description: "Price per unit" },
-                  total: { type: "number", format: "float", description: "Total price" },
-                },
-                required: ["articleId", "quantity", "price"],
-              },
-            },
             expedition: {
               type: "object",
+              nullable: true,
               properties: {
                 _id: { type: "string", description: "Expedition ID (or created if missing)" },
                 nom: { type: "string", description: "Shipping name" },
-                frais: { type: "number", description: "Shipping cost", minimum: 0 },
+                frais: { type: "number", format: "float", minimum: 0, description: "Shipping cost" },
               },
             },
-            totalAmount: { type: "number", format: "float", description: "Total order amount" },
-            status: { type: "string", enum: ["Pending", "Shipped", "Delivered"], description: "Order status" },
+            noteLivraison: { type: "string", description: "Delivery note" },
+            modePaiment: { type: "string", description: "Payment method" },
+            codeSuivi: { type: "string", description: "Tracking code" },
+            articles: {
+              type: "array",
+              description: "List of ordered articles",
+              items: {
+                type: "object",
+                properties: {
+                  article: { type: "string", description: "ID of the article" },
+                  quantity: { type: "number", description: "Quantity of the article" },
+                },
+              },
+            },
+            etatCommande: {
+              type: "string",
+              description: "Order status",
+            },
+            freeShippings: { type: "boolean", description: "Indicates whether shipping is free" },
           },
-          required: ["clientId", "products", "totalAmount", "status"],
+          required: ["clientId", "articles", "etatCommande", "freeShippings"],
         },
+        
         Supplier: {
           type: "object",
           properties: {
@@ -93,33 +101,29 @@ const swaggerOptions = {
         SupplierOrder: {
           type: "object",
           properties: {
-            codeCommande: { type: "string", description: "Unique supplier order code" },
+            codeCommande: { type: "string", description: "Unique order code" },
             dateCommande: { type: "string", format: "date", description: "Order date" },
-            fournisseur: {
+            fournisseur: { type: "string", description: "ID of the supplier" },
+            expedition: {
               type: "object",
               properties: {
-                _id: { type: "string", description: "Supplier ID (or created if missing)" },
-                nom: { type: "string", description: "Supplier name" },
-                adresse: { type: "string", description: "Supplier address" },
-                contact: { type: "string", description: "Supplier contact" },
+                _id: { type: "string", description: "Expedition ID" },
+                nom: { type: "string", description: "Shipping name" },
+                frais: { type: "number", format: "float", minimum: 0, description: "Shipping cost" },
               },
             },
-            articles: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  article: { type: "string", description: "Article ID" },
-                  quantity: { type: "integer", description: "Quantity ordered" },
-                },
-                required: ["article", "quantity"],
-              },
-            },
-            etatCommande: { type: "string", enum: ["Pending", "Received", "Cancelled"], description: "Order status" },
-            total: { type: "number", format: "float", description: "Total order cost" },
+            noteLivraison: { type: "string", description: "Delivery note" },
+            modePaiment: { type: "string", description: "Payment method" },
+            codeSuivi: { type: "string", description: "Tracking code" },
+            codeArticle: { type: "string", description: "Article code" },
+            quantite: { type: "number", format: "integer", minimum: 1, description: "Quantity of the article" },
+            prix: { type: "number", format: "float", description: "Unit price of the article" },
+            total: { type: "number", format: "float", description: "Total price of the order" },
+            note: { type: "string", description: "Additional notes" },
           },
-          required: ["codeCommande", "dateCommande", "fournisseur", "articles", "etatCommande", "total"],
+          required: ["codeCommande", "dateCommande", "fournisseur", "expedition", "modePaiment", "codeSuivi", "codeArticle", "quantite", "prix", "total"],
         },
+        
         Expedition: {
           type: "object",
           properties: {

@@ -5,6 +5,7 @@ const {
   addArticle,
   updateArticle,
   deleteArticle,
+  getArticleById
 } = require('../controllers/articleController');
 
 const router = express.Router();
@@ -113,5 +114,30 @@ router.put('/:id', upload.single('image'), updateArticle);
  *         description: Article not found
  */
 router.delete('/:id', deleteArticle);
+
+/**
+ * @swagger
+ * /api/articles/{id}:
+ *   get:
+ *     summary: Get an article by ID
+ *     tags: [Articles]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the article
+ *         schema:
+ *           type: string  # 🔹 Changed to string for MongoDB compatibility
+ *     responses:
+ *       200:
+ *         description: Article data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Article'
+ *       404:
+ *         description: Article not found
+ */
+router.get('/:id', getArticleById);
 
 module.exports = router;

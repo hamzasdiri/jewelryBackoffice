@@ -4,6 +4,7 @@ const {
   addCategory,
   updateCategory,
   deleteCategory,
+  getCategoryById
 } = require('../controllers/categoryController');
 
 const router = express.Router();
@@ -112,5 +113,32 @@ router.put('/:code', updateCategory);
  *         description: Category not found
  */
 router.delete('/:code', deleteCategory);
+
+
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   get:
+ *     summary: Get an category by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the category
+ *         schema:
+ *           type: string  # 🔹 Changed to string for MongoDB compatibility
+ *     responses:
+ *       200:
+ *         description: Category data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *       404:
+ *         description: Category not found
+ */
+router.get('/:id', getCategoryById);
+
 
 module.exports = router;

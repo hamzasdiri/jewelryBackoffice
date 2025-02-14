@@ -21,8 +21,9 @@ const getSupplierOrders = async (req, res) => {
 const getSupplierOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await SupplierOrder.findById(id).populate('fournisseur').populate('articles.article');
-
+    const order = await SupplierOrder.findById(id)
+      .populate({ path: 'fournisseur', match: {} }) // Returns null if fournisseur is invalid
+      .populate({ path: 'expedition', match: {} });
     if (!order) {
       return res.status(404).json({ message: 'Supplier order not found' });
     }
